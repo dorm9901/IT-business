@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы клиентов - Лев | Frontend разработчик</title>
+    <style>
+        /* Общие стили и сброс */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #ffffff;
+            background-color: #0a0a0a;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Навигация */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo h2 {
+            color: #a855f7;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+        }
+
+        .nav-link {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+            font-size: 1rem;
+        }
+
+        .nav-link:hover {
+            color: #a855f7;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #8b5cf6, #a855f7);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Заголовок страницы */
+        .page-header {
+            padding: 120px 0 60px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 100%);
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ffffff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #cccccc;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Статистика отзывов */
+        .reviews-stats {
+            background: linear-gradient(145deg, #1a1a1a, #2a1a4a);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 40px 0;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #a855f7;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #cccccc;
+            font-size: 1rem;
+        }
+
+        .rating-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .star {
+            color: #fbbf24;
+            font-size: 1.5rem;
+        }
+
+        /* Форма добавления отзыва */
+        .add-review-section {
+            background: #0a0a0a;
+            padding: 60px 0;
+        }
+
+        .review-form-container {
+            background: linear-gradient(145deg, #1a1a1a, #2a1a4a);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-title {
+            text-align: center;
+            color: #a855f7;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #a855f7;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .rating-star {
+            font-size: 2rem;
+            color: #444;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .rating-star:hover,
+        .rating-star.active {
+            color: #fbbf24;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #8b5cf6, #a855f7);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Секция отзывов */
+        .reviews-section {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 100%);
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #a855f7;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #a855f7);
+        }
+
+        .reviews-filter {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: #a855f7;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: rgba(168, 85, 247, 0.2);
+            border-color: #a855f7;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .review-card {
+            background: linear-gradient(145deg, #1a1a1a, #2a1a4a);
+            padding: 2rem;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            position: relative;
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(168, 85, 247, 0.2);
+        }
+
+        .review-card.positive {
+            border-left: 4px solid #10b981;
+        }
+
+        .review-card.negative {
+            border-left: 4px solid #ef4444;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .review-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #8b5cf6, #a855f7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .author-info h4 {
+            color: #a855f7;
+            margin-bottom: 0.2rem;
+        }
+
+        .author-info .project-type {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .review-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .review-date {
+            color: #888;
+            font-size: 0.9rem;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .review-text {
+            color: #cccccc;
+            line-height: 1.6;
+            margin: 1rem 0;
+        }
+
+        .review-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(168, 85, 247, 0.1);
+        }
+
+        .project-details {
+            color: #a855f7;
+            font-size: 0.9rem;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .action-btn:hover {
+            color: #a855f7;
+        }
+
+        /* Пагинация */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .page-btn {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: #a855f7;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: #a855f7;
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #1a1a1a, #2a1a4a);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            text-align: center;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #cccccc;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #a855f7;
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #10b981, #34d399);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .reviews-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .review-form-container {
+                padding: 20px;
+            }
+
+            .reviews-filter {
+                gap: 0.5rem;
+            }
+
+            .filter-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+
+        /* Анимации */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Плавный скролл */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>IT Услуги</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Главная</a></li>
+                <li class="nav-item"><a href="index.html#about" class="nav-link">О себе</a></li>
+                <li class="nav-item"><a href="index.html#services" class="nav-link">Услуги</a></li>
+                <li class="nav-item"><a href="index.html#portfolio" class="nav-link">Портфолио</a></li>
+                <li class="nav-item"><a href="#reviews" class="nav-link active">Отзывы</a></li>
+                <li class="nav-item"><a href="index.html#contacts" class="nav-link">Контакты</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Заголовок страницы -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">Отзывы клиентов</h1>
+            <p class="page-subtitle">Мнения реальных клиентов о качестве моей работы и уровне сервиса</p>
+        </div>
+    </section>
+
+    <!-- Статистика отзывов -->
+    <section class="container">
+        <div class="reviews-stats fade-in">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalReviews">21</div>
+                    <div class="stat-label">Всего отзывов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="positiveReviews">19</div>
+                    <div class="stat-label">Положительных</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4.7</div>
+                    <div class="stat-label">Средняя оценка</div>
+                    <div class="rating-display">
+                        <div class="stars">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Довольных клиентов</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Форма добавления отзыва -->
+    <section class="add-review-section">
+        <div class="container">
+            <div class="review-form-container fade-in">
+                <h2 class="form-title">Оставьте свой отзыв</h2>
+                <form id="reviewForm">
+                    <div class="form-group">
+                        <label for="authorName">Ваше имя *</label>
+                        <input type="text" id="authorName" name="authorName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectType">Тип проекта *</label>
+                        <select id="projectType" name="projectType" required>
+                            <option value="">Выберите тип проекта</option>
+                            <option value="Веб-сайт">Веб-сайт</option>
+                            <option value="Telegram бот">Telegram бот</option>
+                            <option value="Мини-приложение">Мини-приложение</option>
+                            <option value="Консультация">Консультация</option>
+                            <option value="Другое">Другое</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rating">Ваша оценка *</label>
+                        <div class="rating-input">
+                            <div class="rating-stars" id="ratingStars">
+                                <span class="rating-star" data-rating="1">★</span>
+                                <span class="rating-star" data-rating="2">★</span>
+                                <span class="rating-star" data-rating="3">★</span>
+                                <span class="rating-star" data-rating="4">★</span>
+                                <span class="rating-star" data-rating="5">★</span>
+                            </div>
+                            <span id="ratingText">Нажмите на звезды</span>
+                            <input type="hidden" id="rating" name="rating" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reviewText">Ваш отзыв *</label>
+                        <textarea id="reviewText" name="reviewText" placeholder="Расскажите о вашем опыте работы..." required maxlength="1000"></textarea>
+                        <small style="color: #888;">Максимум 1000 символов</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectBudget">Бюджет проекта (необязательно)</label>
+                        <select id="projectBudget" name="projectBudget">
+                            <option value="">Не указывать</option>
+                            <option value="До 30,000 ₽">До 30,000 ₽</option>
+                            <option value="30,000 - 50,000 ₽">30,000 - 50,000 ₽</option>
+                            <option value="50,000 - 100,000 ₽">50,000 - 100,000 ₽</option>
+                            <option value="Свыше 100,000 ₽">Свыше 100,000 ₽</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text">Отправить отзыв</span>
+                        <span class="btn-loading" style="display: none;">Отправляется...</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция отзывов -->
+    <section id="reviews" class="reviews-section">
+        <div class="container">
+            <h2 class="section-title">Что говорят клиенты</h2>
+
+            <!-- Фильтры -->
+            <div class="reviews-filter">
+                <button class="filter-btn active" data-filter="all">Все отзывы</button>
+                <button class="filter-btn" data-filter="positive">Положительные</button>
+                <button class="filter-btn" data-filter="negative">Отрицательные</button>
+                <button class="filter-btn" data-filter="website">Веб-сайты</button>
+                <button class="filter-btn" data-filter="bot">Telegram боты</button>
+                <button class="filter-btn" data-filter="app">Приложения</button>
+            </div>
+
+            <!-- Сетка отзывов -->
+            <div class="reviews-grid" id="reviewsGrid">
+                <!-- Отзывы будут загружены через JavaScript -->
+            </div>
+
+            <!-- Пагинация -->
+            <div class="pagination" id="pagination">
+                <!-- Пагинация будет сгенерирована через JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Модальное окно успеха -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="success-icon">✓</div>
+            <h3>Спасибо за отзыв!</h3>
+            <p>Ваш отзыв успешно добавлен и будет отображен на сайте после модерации.</p>
+            <button class="btn btn-primary" onclick="closeModal()">Понятно</button>
+        </div>
+    </div>
+
+    <script>
+        // База данных отзывов
+        let reviewsDatabase = [
+            // Положительные отзывы (19 штук)
+            {
+                id: 1,
+                author: "Александр Иванов",
+                projectType: "Веб-сайт",
+                rating: 5,
+                text: "Отличная работа! Лев создал для нашей компании потрясающий сайт. Очень доволен результатом, сроки соблюдены, коммуникация на высшем уровне. Рекомендую!",
+                date: "2024-06-15",
+                budget: "50,000 - 100,000 ₽",
+                likes: 12,
+                type: "positive"
+            },
+            {
+                id: 2,
+                author: "Мария Петрова",
+                projectType: "Telegram бот",
+                rating: 5,
+                text: "Заказывала Telegram бота для своего бизнеса. Лев сделал все быстро и качественно, бот работает без сбоев, клиенты довольны. Спасибо за профессионализм!",
+                date: "2024-06-10",
+                budget: "30,000 - 50,000 ₽",
+                likes: 8,
+                type: "positive"
+            },
+            {
+                id: 3,
+                author: "Дмитрий Козлов",
+                projectType: "Мини-приложение",
+                rating: 4,
+                text: "Хорошая работа над мини-приложением. Есть небольшие замечания по дизайну, но в целом все устраивает. Лев отзывчивый и понимает что нужно.",
+                date: "2024-06-05",
+                budget: "30,000 - 50,000 ₽",
+                likes: 5,
+                type: "positive"
+            },
+            {
+                id: 4,
+                author: "Елена Сидорова",
+                projectType: "Веб-сайт",
+                rating: 5,
+                text: "Великолепный сайт-портфолио! Лев учел все мои пожелания и сделал даже лучше, чем я представляла. Очень красивый дизайн и удобная навигация.",
+                date: "2024-05-28",
+                budget: "До 30,000 ₽",
+                likes: 15,
+                type: "positive"
+            },
+            {
+                id: 5,
+                author: "Игорь Морозов",
+                projectType: "Telegram бот",
+                rating: 5,
+                text: "Заказывал бота для ресторана. Теперь клиенты могут легко делать заказы через Telegram. Очень удобно! Лев - настоящий профессионал.",
+                date: "2024-05-20",
+                budget: "50,000 - 100,000 ₽",
+                likes: 9,
+                type: "positive"
+            },
+            {
+                id: 6,
+                author: "Анна Васильева",
+                projectType: "Веб-сайт",
+                rating: 4,
+                text: "Хороший сайт для нашего салона красоты. Клиенты довольны, легко записываются онлайн. Есть мелкие недочеты, но в целом результат отличный.",
+                date: "2024-05-15",
+                budget: "30,000 - 50,000 ₽",
+                likes: 7,
+                type: "positive"
+            },
+            {
+                id: 7,
+                author: "Сергей Волков",
+                projectType: "Мини-приложение",
+                rating: 5,
+                text: "Отличное приложение для управления задачами! Лев сделал все именно так, как я хотел. Интерфейс интуитивно понятный, работает быстро.",
+                date: "2024-05-10",
+                budget: "50,000 - 100,000 ₽",
+                likes: 11,
+                type: "positive"
+            },
+            {
+                id: 8,
+                author: "Ольга Николаева",
+                projectType: "Telegram бот",
+                rating: 4,
+                text: "Бот для онлайн-магазина работает хорошо. Покупатели активно используют, продажи выросли. Были небольшие проблемы в начале, но Лев их быстро исправил.",
+                date: "2024-05-05",
+                budget: "30,000 - 50,000 ₽",
+                likes: 6,
+                type: "positive"
+            },
+            {
+                id: 9,
+                author: "Михаил Романов",
+                projectType: "Веб-сайт",
+                rating: 5,
+                text: "Превосходная работа! Сайт для нашей IT-компании получился современным и функциональным. Лев понимает тренды и знает свое дело.",
+                date: "2024-04-30",
+                budget: "Свыше 100,000 ₽",
+                likes: 18,
+                type: "positive"
+            },
+            {
+                id: 10,
+                author: "Татьяна Лебедева",
+                projectType: "Консультация",
+                rating: 5,
+                text: "Получила отличную консультацию по развитию проекта. Лев дал много полезных советов и помог выбрать правильное направление развития.",
+                date: "2024-04-25",
+                budget: "До 30,000 ₽",
+                likes: 4,
+                type: "positive"
+            },
+            {
+                id: 11,
+                author: "Владимир Орлов",
+                projectType: "Telegram бот",
+                rating: 4,
+                text: "Бот для фитнес-клуба работает стабильно. Участники легко записываются на тренировки. Хотелось бы больше функций, но за эти деньги все отлично.",
+                date: "2024-04-20",
+                budget: "30,000 - 50,000 ₽",
+                likes: 7,
+                type: "positive"
+            },
+            {
+                id: 12,
+                author: "Екатерина Белова",
+                projectType: "Веб-сайт",
+                rating: 5,
+                text: "Замечательный интернет-магазин! Дизайн современный, навигация удобная, мобильная версия работает отлично. Продажи значительно выросли!",
+                date: "2024-04-15",
+                budget: "50,000 - 100,000 ₽",
+                likes: 13,
+                type: "positive"
+            },
+            {
+                id: 13,
+                author: "Роман Зайцев",
+                projectType: "Мини-приложение",
+                rating: 4,
+                text: "Приложение для учета расходов получилось функциональным. Есть все необходимые возможности, интерфейс понятный. Доволен результатом.",
+                date: "2024-04-10",
+                budget: "30,000 - 50,000 ₽",
+                likes: 5,
+                type: "positive"
+            },
+            {
+                id: 14,
+                author: "Людмила Смирнова",
+                projectType: "Веб-сайт",
+                rating: 5,
+                text: "Лев создал потрясающий сайт для нашего детского центра. Родители легко записывают детей на занятия, а мы получаем больше заявок.",
+                date: "2024-04-05",
+                budget: "30,000 - 50,000 ₽",
+                likes: 10,
+                type: "positive"
+            },
+            {
+                id: 15,
+                author: "Андрей Федоров",
+                projectType: "Telegram бот",
+                rating: 5,
+                text: "Бот для службы доставки работает безупречно! Клиенты могут легко оформлять заказы, а мы автоматически получаем уведомления. Очень удобно!",
+                date: "2024-03-30",
+                budget: "50,000 - 100,000 ₽",
+                likes: 14,
+                type: "positive"
+            },
+            {
+                id: 16,
+                author: "Наталья Соколова",
+                projectType: "Веб-сайт",
+                rating: 4,
+                text: "Хороший корпоративный сайт. Коллеги довольны, информация подается структурированно. Небольшие замечания по скорости загрузки, но в целом все хорошо.",
+                date: "2024-03-25",
+                budget: "30,000 - 50,000 ₽",
+                likes: 6,
+                type: "positive"
+            },
+            {
+                id: 17,
+                author: "Артем Новиков",
+                projectType: "Мини-приложение",
+                rating: 5,
+                text: "Отличное приложение для планирования! Лев учел все мои требования и добавил полезные функции, о которых я даже не думал. Рекомендую!",
+                date: "2024-03-20",
+                budget: "50,000 - 100,000 ₽",
+                likes: 12,
+                type: "positive"
+            },
+            {
+                id: 18,
+                author: "Юлия Павлова",
+                projectType: "Telegram бот",
+                rating: 4,
+                text: "Бот для косметологического кабинета работает стабильно. Клиенты записываются через бота, что очень удобно. Есть мелкие пожелания по улучшению.",
+                date: "2024-03-15",
+                budget: "30,000 - 50,000 ₽",
+                likes: 8,
+                type: "positive"
+            },
+            {
+                id: 19,
+                author: "Виктор Крылов",
+                projectType: "Веб-сайт",
+                rating: 5,
+                text: "Профессиональный сайт для строительной компании! Все сделано на высшем уровне - от дизайна до функционала. Клиенты впечатлены!",
+                date: "2024-03-10",
+                budget: "Свыше 100,000 ₽",
+                likes: 16,
+                type: "positive"
+            },
+
+            // Отрицательные отзывы (2 штуки)
+            {
+                id: 20,
+                author: "Константин Жуков",
+                projectType: "Веб-сайт",
+                rating: 2,
+                text: "К сожалению, результат не оправдал ожиданий. Сайт получился не совсем тем, что мы обсуждали. Были проблемы с мобильной версией, которые исправлялись долго. За эти деньги ожидал большего.",
+                date: "2024-02-15",
+                budget: "50,000 - 100,000 ₽",
+                likes: 2,
+                type: "negative"
+            },
+            {
+                id: 21,
+                author: "Светлана Медведева",
+                projectType: "Telegram бот",
+                rating: 3,
+                text: "Бот работает, но не все функции реализованы так, как хотелось. Были задержки с запуском, пришлось ждать дольше обещанного срока. В целом результат средний.",
+                date: "2024-01-20",
+                budget: "30,000 - 50,000 ₽",
+                likes: 1,
+                type: "negative"
+            }
+        ];
+
+        // Настройки пагинации
+        const reviewsPerPage = 6;
+        let currentPage = 1;
+        let currentFilter = 'all';
+        let filteredReviews = [...reviewsDatabase];
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeReviewForm();
+            renderReviews();
+            initializeFilters();
+            initializeModal();
+            updateStats();
+            animateElements();
+        });
+
+        // Инициализация формы отзывов
+        function initializeReviewForm() {
+            const ratingStars = document.querySelectorAll('.rating-star');
+            const ratingInput = document.getElementById('rating');
+            const ratingText = document.getElementById('ratingText');
+            const reviewForm = document.getElementById('reviewForm');
+
+            // Обработка клика по звездам
+            ratingStars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = parseInt(this.dataset.rating);
+                    ratingInput.value = rating;
+
+                    // Обновляем визуальное отображение
+                    ratingStars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+
+                    // Обновляем текст
+                    const ratingTexts = ['', 'Ужасно', 'Плохо', 'Нормально', 'Хорошо', 'Отлично'];
+                    ratingText.textContent = ratingTexts[rating];
+                });
+
+                // Эффект наведения
+                star.addEventListener('mouseenter', function() {
+                    const rating = parseInt(this.dataset.rating);
+                    ratingStars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.style.color = '#fbbf24';
+                        } else {
+                            s.style.color = '#444';
+                        }
+                    });
+                });
+            });
+
+            // Сброс эффекта наведения
+            document.getElementById('ratingStars').addEventListener('mouseleave', function() {
+                const currentRating = parseInt(ratingInput.value) || 0;
+                ratingStars.forEach((s, index) => {
+                    if (index < currentRating) {
+                        s.style.color = '#fbbf24';
+                    } else {
+                        s.style.color = '#444';
+                    }
+                });
+            });
+
+            // Обработка отправки формы
+            reviewForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const reviewData = {};
+
+                // Собираем данные формы
+                for (let [key, value] of formData.entries()) {
+                    reviewData[key] = value;
+                }
+
+                // Проверяем обязательные поля
+                if (!reviewData.authorName || !reviewData.projectType || !reviewData.rating || !reviewData.reviewText) {
+                    alert('Пожалуйста, заполните все обязательные поля!');
+                    return;
+                }
+
+                // Показываем состояние загрузки
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const btnText = submitBtn.querySelector('.btn-text');
+                const btnLoading = submitBtn.querySelector('.btn-loading');
+
+                btnText.style.display = 'none';
+                btnLoading.style.display = 'inline';
+                submitBtn.disabled = true;
+
+                // Симулируем отправку
+                setTimeout(() => {
+                    addNewReview(reviewData);
+                    showSuccessModal();
+                    this.reset();
+                    ratingInput.value = '';
+                    ratingText.textContent = 'Нажмите на звезды';
+                    ratingStars.forEach(s => {
+                        s.classList.remove('active');
+                        s.style.color = '#444';
+                    });
+
+                    // Возвращаем кнопку в исходное состояние
+                    btnText.style.display = 'inline';
+                    btnLoading.style.display = 'none';
+                    submitBtn.disabled = false;
+
+                }, 2000);
+            });
+        }
+
+        // Добавление нового отзыва
+        function addNewReview(reviewData) {
+            const newReview = {
+                id: reviewsDatabase.length + 1,
+                author: reviewData.authorName,
+                projectType: reviewData.projectType,
+                rating: parseInt(reviewData.rating),
+                text: reviewData.reviewText,
+                date: new Date().toISOString().split('T')[0],
+                budget: reviewData.projectBudget || 'Не указан',
+                likes: 0,
+                type: parseInt(reviewData.rating) >= 4 ? 'positive' : 'negative'
+            };
+
+            // Добавляем в начало массива
+            reviewsDatabase.unshift(newReview);
+
+            // Сохраняем в localStorage
+            localStorage.setItem('userReviews', JSON.stringify(reviewsDatabase));
+
+            // Обновляем отображение
+            applyFilter(currentFilter);
+            updateStats();
+        }
+
+        // Рендеринг отзывов
+        function renderReviews() {
+            const reviewsGrid = document.getElementById('reviewsGrid');
+            const startIndex = (currentPage - 1) * reviewsPerPage;
+            const endIndex = startIndex + reviewsPerPage;
+            const reviewsToShow = filteredReviews.slice(startIndex, endIndex);
+
+            reviewsGrid.innerHTML = '';
+
+            reviewsToShow.forEach(review => {
+                const reviewCard = createReviewCard(review);
+                reviewsGrid.appendChild(reviewCard);
+            });
+
+            renderPagination();
+            animateReviewCards();
+        }
+
+        // Создание карточки отзыва
+        function createReviewCard(review) {
+            const card = document.createElement('div');
+            card.className = `review-card ${review.type} fade-in`;
+
+            const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+            const initials = review.author.split(' ').map(name => name[0]).join('');
+            const formattedDate = new Date(review.date).toLocaleDateString('ru-RU');
+
+            card.innerHTML = `
+                <div class="review-date">${formattedDate}</div>
+                <div class="review-header">
+                    <div class="review-author">
+                        <div class="author-avatar">${initials}</div>
+                        <div class="author-info">
+                            <h4>${review.author}</h4>
+                            <div class="project-type">${review.projectType}</div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <div class="stars" style="color: #fbbf24;">${stars}</div>
+                    </div>
+                </div>
+                <div class="review-text">${review.text}</div>
+                <div class="review-footer">
+                    <div class="project-details">Бюджет: ${review.budget}</div>
+                    <div class="review-actions">
+                        <button class="action-btn" onclick="likeReview(${review.id})">
+                            👍 <span id="likes-${review.id}">${review.likes}</span>
+                        </button>
+                        <button class="action-btn" onclick="shareReview(${review.id})">
+                            🔗 Поделиться
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Инициализация фильтров
+        function initializeFilters() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Удаляем активный класс у всех кнопок
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Добавляем активный класс к текущей кнопке
+                    this.classList.add('active');
+
+                    // Применяем фильтр
+                    const filterType = this.dataset.filter;
+                    applyFilter(filterType);
+                });
+            });
+        }
+
+        // Применение фильтра
+        function applyFilter(filterType) {
+            currentFilter = filterType;
+            currentPage = 1;
+
+            switch (filterType) {
+                case 'all':
+                    filteredReviews = [...reviewsDatabase];
+                    break;
+                case 'positive':
+                    filteredReviews = reviewsDatabase.filter(review => review.type === 'positive');
+                    break;
+                case 'negative':
+                    filteredReviews = reviewsDatabase.filter(review => review.type === 'negative');
+                    break;
+                case 'website':
+                    filteredReviews = reviewsDatabase.filter(review => review.projectType === 'Веб-сайт');
+                    break;
+                case 'bot':
+                    filteredReviews = reviewsDatabase.filter(review => review.projectType === 'Telegram бот');
+                    break;
+                case 'app':
+                    filteredReviews = reviewsDatabase.filter(review => review.projectType === 'Мини-приложение');
+                    break;
+                default:
+                    filteredReviews = [...reviewsDatabase];
+            }
+
+            renderReviews();
+        }
+
+        // Рендеринг пагинации
+        function renderPagination() {
+            const pagination = document.getElementById('pagination');
+            const totalPages = Math.ceil(filteredReviews.length / reviewsPerPage);
+
+            pagination.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            // Кнопка "Предыдущая"
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn';
+            prevBtn.textContent = '‹ Назад';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => changePage(currentPage - 1);
+            pagination.appendChild(prevBtn);
+
+            // Номера страниц
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                    pageBtn.textContent = i;
+                    pageBtn.onclick = () => changePage(i);
+                    pagination.appendChild(pageBtn);
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    const dots = document.createElement('span');
+                    dots.textContent = '...';
+                    dots.style.color = '#888';
+                    pagination.appendChild(dots);
+                }
+            }
+
+            // Кнопка "Следующая"
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+            nextBtn.textContent = 'Вперед ›';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => changePage(currentPage + 1);
+            pagination.appendChild(nextBtn);
+        }
+
+        // Смена страницы
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredReviews.length / reviewsPerPage);
+            if (page < 1 || page > totalPages) return;
+
+            currentPage = page;
+            renderReviews();
+
+            // Плавная прокрутка к началу отзывов
+            document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Обновление статистики
+        function updateStats() {
+            const totalReviews = reviewsDatabase.length;
+            const positiveReviews = reviewsDatabase.filter(r => r.type === 'positive').length;
+            const averageRating = (reviewsDatabase.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(1);
+
+            document.getElementById('totalReviews').textContent = totalReviews;
+            document.getElementById('positiveReviews').textContent = positiveReviews;
+
+            // Можно добавить обновление среднего рейтинга
+            // document.querySelector('.stat-number').textContent = averageRating;
+        }
+
+        // Лайк отзыва
+        function likeReview(reviewId) {
+            const review = reviewsDatabase.find(r => r.id === reviewId);
+            if (review) {
+                review.likes++;
+                document.getElementById(`likes-${reviewId}`).textContent = review.likes;
+
+                // Сохраняем в localStorage
+                localStorage.setItem('userReviews', JSON.stringify(reviewsDatabase));
+            }
+        }
+
+        // Поделиться отзывом
+        function shareReview(reviewId) {
+            const review = reviewsDatabase.find(r => r.id === reviewId);
+            if (review) {
+                const text = `Отзыв о работе с Львом - Frontend разработчиком:\n\n"${review.text}"\n\n- ${review.author}, ${review.projectType}`;
+
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Отзыв о работе с Львом',
+                        text: text,
+                        url: window.location.href
+                    });
+                } else {
+                    // Fallback - копирование в буфер обмена
+                    navigator.clipboard.writeText(text).then(() => {
+                        alert('Текст отзыва скопирован в буфер обмена!');
+                    }).catch(() => {
+                        alert('Не удалось скопировать текст');
+                    });
+                }
+            }
+        }
+
+        // Инициализация модального окна
+        function initializeModal() {
+            const modal = document.getElementById('successModal');
+            const closeBtn = modal.querySelector('.modal-close');
+
+            closeBtn.addEventListener('click', closeModal);
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        // Показать модальное окно
+        function showSuccessModal() {
+            document.getElementById('successModal').style.display = 'flex';
+        }
+
+        // Закрыть модальное окно
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+        // Анимация элементов при прокрутке
+        function animateElements() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Анимация карточек отзывов
+        function animateReviewCards() {
+            const cards = document.querySelectorAll('.review-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('visible');
+                }, index * 100);
+            });
+        }
+
+        // Загрузка сохраненных отзывов из localStorage
+        function loadSavedReviews() {
+            const savedReviews = localStorage.getItem('userReviews');
+            if (savedReviews) {
+                reviewsDatabase = JSON.parse(savedReviews);
+            }
+        }
+
+        // Загружаем сохраненные отзывы при инициализации
+        loadSavedReviews();
+    </script>
+</body>
+</html>
